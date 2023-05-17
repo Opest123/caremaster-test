@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $companies = \App\Models\Company::factory(10)->create();
-        \App\Models\Employee::factory(50)->create();
+
+        \App\Models\Employee::factory(10)->create();
     }
 }

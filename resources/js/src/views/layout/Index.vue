@@ -27,7 +27,7 @@
                         <companies/>
                     </el-tab-pane>
                     <el-tab-pane label="Employees" name="employees">
-                        Employees
+                        <employees/>
                     </el-tab-pane>
                 </el-tabs>
             </el-main>
@@ -39,14 +39,15 @@
 import {useAuthStore} from "../../stores/auth";
 import {mapState} from "pinia/dist/pinia";
 import {ArrowDown} from '@element-plus/icons-vue'
-import Web from "../../utils/web";
 import Companies from "../component/Companies.vue";
+import Employees from "../component/Employees.vue";
 
 const authStore = useAuthStore()
 
 export default {
     name: 'dashboard',
     components: {
+        Employees,
         ArrowDown,
         Companies
     },

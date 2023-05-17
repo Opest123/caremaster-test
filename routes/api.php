@@ -22,5 +22,7 @@ Route::post('login', [\App\Http\Controllers\Auth\AuthController::class, 'login']
 Route::post('logout', [\App\Http\Controllers\Auth\AuthController::class, 'logout']);
 Route::post('user', [\App\Http\Controllers\Auth\AuthController::class, 'user']);
 
-Route::resource('companies',\App\Http\Controllers\CompanyController::class);
-//Route::resource('companies','CompanyController');
+Route::get('companies/getMinifiedCompanyList', '\App\Http\Controllers\CompanyController@getMinifiedCompanyList');
+Route::resource('companies', \App\Http\Controllers\CompanyController::class);
+
+Route::resource('employees', \App\Http\Controllers\EmployeeController::class);

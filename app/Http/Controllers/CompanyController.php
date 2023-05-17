@@ -75,4 +75,11 @@ class CompanyController extends Controller
 
         return response()->json(null, 204);
     }
+
+    public function getMinifiedCompanyList()
+    {
+        $company = Company::get(['id', 'name']);
+
+        return response()->json($company, 200);
+    }
 }

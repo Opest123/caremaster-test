@@ -1,17 +1,27 @@
 <template>
     <el-dialog v-model="isVisible" :title="modalData.title" width="70%" draggable>
         <el-form ref="form" :model="form" :rules="rules" label-position="top">
-            <el-form-item label="Name:" prop="name">
-                <el-input v-model="form.name"/>
+            <el-form-item label="First Name:" prop="first_name">
+                <el-input v-model="form.first_name"/>
+            </el-form-item>
+            <el-form-item label="Last Name:" prop="last_name">
+                <el-input v-model="form.last_name"/>
+            </el-form-item>
+            <el-form-item label="Company:" prop="company_id">
+                <el-select v-model="form.company_id" class="w-full" clearable placeholder="Select" size="large">
+                    <el-option
+                        v-for="item in companies"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id"
+                    />
+                </el-select>
             </el-form-item>
             <el-form-item label="Email:" prop="email">
                 <el-input v-model="form.email" type="email"/>
             </el-form-item>
-            <el-form-item label="Logo:" prop="logo">
-                <input type="file" id="file" @change="fileChanged" accept="image/x-png,image/gif,image/jpeg"/>
-            </el-form-item>
-            <el-form-item label="Website:" prop="website">
-                <el-input v-model="form.website"/>
+            <el-form-item label="Phone:" prop="phone">
+                <el-input v-model="form.phone"/>
             </el-form-item>
         </el-form>
 
@@ -27,15 +37,15 @@
 </template>
 
 <script>
-import {useCompanyStore} from "../../../stores/companyModal";
 import {storeToRefs} from "pinia/dist/pinia";
 import Web from "../../../utils/web";
+import {useEmployeeStore} from "../../../stores/employeeModal";
 
-const companyStore = useCompanyStore()
-const {modal, modalTitle} = storeToRefs(companyStore);
+const employeeStore = useEmployeeStore()
+const {modal, modalTitle} = storeToRefs(employeeStore);
 
 export default {
-    name: 'CreateOrEditCompany',
+    name: 'CreateOrEditEmployee',
     props: [
         'modalData'
     ],
@@ -44,10 +54,12 @@ export default {
             isVisible: modal,
             form: {},
             rules: {
-                name: [{required: true, message: "Name is required"}],
+                first_name: [{required: true, message: "First Name is required"}],
+                last_name: [{required: true, message: "Last Name is required"}],
+                company_id: [{required: true, message: "Company is required"}],
                 email: [{required: true, message: "Email is required"}],
-                logo: [{required: true, message: "Logo is required"}],
-            }
+            },
+            companies: []
         }
     },
     computed: {
@@ -73,19 +85,21 @@ export default {
         'isVisible': {
             handler(val) {
                 if (!val) {
-                    console.log('isVisible ', val)
-                    companyStore.setModal(val)
-                    companyStore.setModalTitle('')
+                    employeeStore.setModal(val)
+                    employeeStore.setModalTitle('')
                 }
             },
             deep: true
         },
     },
+    mounted() {
+        this.getCompanies()
+    },
     methods: {
         closeModal() {
             this.isVisible = false
-            companyStore.setModal(false)
-            companyStore.setModalTitle('')
+            employeeStore.setModal(false)
+            employeeStore.setModalTitle('')
             this.form = {}
             this.emitter.emit('reload')
         },
@@ -98,17 +112,8 @@ export default {
         save() {
             this.$refs.form.validate(async (valid, errors) => {
                     if (valid) {
-                        let formData = new FormData()
-                        formData.append('name', this.form.name)
-                        formData.append('email', this.form.email)
-                        formData.append('logo', this.form.logo)
-                        formData.append('website', _.get(this.form, 'website', ''))
-
                         if (this.modalData.title === 'Edit') {
-                            Web.post(`api/companies/${this.modalData.data.id}`, formData, {
-                                headers: {
-                                    "Content-Type": "multipart/form-data",
-                                },
+                            Web.post(`api/employees/${this.modalData.data.id}`, this.form, {
                                 params: {
                                     _method: "put",
                                 },
@@ -119,11 +124,7 @@ export default {
                                 console.log('error', err)
                             })
                         } else {
-                            Web.post(`api/companies`, formData, {
-                                headers: {
-                                    "Content-Type": "multipart/form-data",
-                                }
-                            }).then((res) => {
+                            Web.post(`api/employees`, this.form).then((res) => {
                                 console.log('save ', res)
                                 this.closeModal()
                             }).catch(err => {
@@ -133,7 +134,14 @@ export default {
                     }
                 }
             )
-        }
+        },
+        getCompanies() {
+            Web.get('api/companies/getMinifiedCompanyList').then((res) => {
+                this.companies = res.data
+            }).catch(err => {
+                console.log('error', err)
+            })
+        },
     }
 }
 </script>

@@ -1,7 +1,7 @@
 import {defineStore} from "pinia/dist/pinia";
 
-export const useCompanyStore = defineStore({
-    id: "companyModalStore",
+export const useEmployeeStore = defineStore({
+    id: "employeeModalStore",
     state: () => ({
         modal: false,
         modalTitle: ''

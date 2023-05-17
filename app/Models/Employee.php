@@ -35,4 +35,9 @@ class Employee extends Authenticatable
             ? $this->first_name . ' ' . $this->last_name
             : $this->first_name;
     }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_id');
+    }
 }
