@@ -1,0 +1,8 @@
+{
+    "vueCompilerOptions": {
+        "compilerOptions": {
+            "allowJs": true,
+            "vue.inlayHints.optionsWrapper": false
+        }
+    }
+}

@@ -32,19 +32,15 @@ export const useAuthStore = defineStore({
 
             await web.get("sanctum/csrf-cookie");
             web.post("api/login", payload).then((res) => {
+                setTimeout(() => {
+                    loading.close();
+                }, 1000);
+
                 const {token, user} = res.data;
-                console.log('login ', res.data)
 
                 this.token = token;
                 this.user = user;
                 this.loggedIn = true;
-
-                // Experimental: trigger functions via localStorage item
-                localStorage.setItem("loggedIn", true);
-
-                setTimeout(() => {
-                    loading.close();
-                }, 2000);
 
                 router.push({name: "dashboard"});
             });

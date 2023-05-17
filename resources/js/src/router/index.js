@@ -14,7 +14,7 @@ export const constantRoutes = [
     },
     {
         path: `/`,
-        component: () => import("@/src/views/dashboard/Index.vue"),
+        component: () => import("@/src/views/layout/Index.vue"),
         meta: {
             middleware: 'auth'
         },
@@ -26,7 +26,15 @@ export const constantRoutes = [
                 meta: {
                     title: `Dashboard`
                 }
-            }
+            },
+            // {
+            //     name: "companies",
+            //     path: '/companies',
+            //     component: import("@/src/views/component/Companies.vue"),
+            //     meta: {
+            //         title: `Companies`
+            //     }
+            // }
         ]
     },
 ];
@@ -40,8 +48,6 @@ router.beforeEach((to, from, next) => {
     document.title = to.meta.title
 
     const authStore = useAuthStore()
-
-    console.log('hi')
 
     if (to.meta.middleware == "guest") {
         if (authStore.loggedIn) {
