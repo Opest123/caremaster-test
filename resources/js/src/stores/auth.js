@@ -43,6 +43,10 @@ export const useAuthStore = defineStore({
                 this.loggedIn = true;
 
                 router.push({name: "dashboard"});
+            }).catch((error) => {
+                setTimeout(() => {
+                    loading.close();
+                }, 1000);
             });
         },
         logout() {
@@ -60,6 +64,10 @@ export const useAuthStore = defineStore({
                 localStorage.setItem("loggedIn", false);
                 router.push({name: "login"});
 
+                setTimeout(() => {
+                    loading.close();
+                }, 2000);
+            }).catch(error => {
                 setTimeout(() => {
                     loading.close();
                 }, 2000);
