@@ -3,7 +3,7 @@
         <el-container>
             <el-header class="flex justify-between items-center p-5 bg-black text-white">
                 <div>
-                    <router-link :to="'/'">{{ routeName }}</router-link>
+                    <router-link :to="{name:'dashboard'}">{{ routeName }}</router-link>
                 </div>
 
                 <el-dropdown>
@@ -24,12 +24,13 @@
             <el-main class="p-5">
                 <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
                     <el-tab-pane label="Companies" name="companies" class="w-full">
-                        <companies/>
                     </el-tab-pane>
-                    <el-tab-pane label="Employees" name="employees">
-                        <employees/>
+
+                    <el-tab-pane label="Employees" name="employees" class="w-full">
                     </el-tab-pane>
                 </el-tabs>
+
+                <router-view></router-view>
             </el-main>
         </el-container>
     </div>
@@ -39,17 +40,22 @@
 import {useAuthStore} from "../../stores/auth";
 import {mapState} from "pinia/dist/pinia";
 import {ArrowDown} from '@element-plus/icons-vue'
-import Companies from "../component/Companies.vue";
-import Employees from "../component/Employees.vue";
-
-const authStore = useAuthStore()
+import {useRoute} from 'vue-router'
 
 export default {
     name: 'dashboard',
+    setup() {
+        const route = useRoute()
+
+        const authStore = useAuthStore()
+
+        return {
+            authStore,
+            route
+        }
+    },
     components: {
-        Employees,
         ArrowDown,
-        Companies
     },
     data() {
         return {
@@ -62,19 +68,20 @@ export default {
             return this.$route.meta.title
         },
         fullName() {
-            return _.get(authStore, 'user.full_name')
+            return _.get(this.authStore, 'user.full_name')
         }
     },
     created() {
     },
     mounted() {
+        this.$router.push({name: this.activeName})
     },
     methods: {
         async logout() {
-            await authStore.logout()
+            await this.authStore.logout()
         },
         handleClick(tab, event) {
-            console.log(tab, event)
+            this.$router.push({name: tab.props.name})
         },
     }
 }

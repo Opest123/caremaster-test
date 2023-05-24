@@ -1,9 +1,5 @@
 <template>
     <div class="container">
-        Hi
-        <el-button type="primary" @click="logout">
-            Logout
-        </el-button>
     </div>
 </template>
 

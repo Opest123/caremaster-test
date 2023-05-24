@@ -1,48 +1,87 @@
 import {createRouter, createWebHistory} from "vue-router";
+import {basePath} from "@/src/utils/settings";
 
 import {useAuthStore} from "../stores/auth";
 
 export const constantRoutes = [
+    {
+        path: `/`,
+        hidden: true,
+        redirect: to => {
+            return {name: 'dashboard'}
+        },
+    },
     {
         name: "login",
         path: "/login",
         component: () => import("@/src/views/auth/Login.vue"),
         meta: {
             middleware: "guest",
-            title: `Login`
+            title: `Login`,
+            requiresAuth: false
         }
     },
     {
-        path: `/`,
+        path: `${basePath}/dashboard`,
         component: () => import("@/src/views/layout/Index.vue"),
         meta: {
-            middleware: 'auth'
+            middleware: 'auth',
+            requiresAuth: true
         },
         children: [
             {
                 name: "dashboard",
-                path: '/',
-                component: import("@/src/views/dashboard/Index.vue"),
+                path: '',
+                component: () => import("@/src/views/dashboard/Index.vue"),
                 meta: {
-                    title: `Dashboard`
+                    title: `Dashboard`,
+                    requiresAuth: true
+                },
+            },
+            {
+                name: "companies",
+                path: '/companies',
+                component: () => import("@/src/views/component/Companies.vue"),
+                meta: {
+                    title: `Companies`,
+                    requiresAuth: true
                 }
             },
-            // {
-            //     name: "companies",
-            //     path: '/companies',
-            //     component: import("@/src/views/component/Companies.vue"),
-            //     meta: {
-            //         title: `Companies`
-            //     }
-            // }
+            {
+                name: "employees",
+                path: '/employees',
+                component: () => import("@/src/views/component/Employees.vue"),
+                meta: {
+                    title: `Employees`,
+                    requiresAuth: true
+                }
+            }
         ]
     },
+    {
+        // path: "*",
+        path: "/:pathMatch(.*)*",
+        name: "not-found",
+        component: () => import("@/src/views/component/errors/NotFound.vue")
+    }
 ];
 
-const router = createRouter({
-    history: createWebHistory(),
-    routes: constantRoutes,
-})
+const createCustomRouter = () =>
+    createRouter({
+        history: createWebHistory(),
+        scrollBehavior(to, from, savedPosition) {
+            return {top: 0}
+        },
+        routes: constantRoutes,
+    });
+
+
+const router = createCustomRouter()
+
+export function resetRouter() {
+    const newRouter = createCustomRouter();
+    router.matcher = newRouter.matcher; // reset router
+}
 
 router.beforeEach((to, from, next) => {
     document.title = to.meta.title

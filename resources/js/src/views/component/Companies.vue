@@ -17,7 +17,7 @@
             </el-table-column>
             <el-table-column prop="website" label="Website">
                 <template #default="scope">
-                    <el-link :href="scope.row.website" target="_blank">{{ scope.row.website }}</el-link>
+                    <el-link :href="get(scope.row, 'website')" target="_blank">{{ get(scope.row, 'website') }}</el-link>
                 </template>
             </el-table-column>
             <el-table-column label="Action">
